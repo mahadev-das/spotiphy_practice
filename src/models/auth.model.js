@@ -20,5 +20,4 @@ const registerUserSchema= new mongoose.Schema({
 })
 
 const userModel=mongoose.model('user',registerUserSchema);
-
 module.exports=userModel;
