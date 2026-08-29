@@ -6,13 +6,22 @@ async function userRagistration(req, res) {
   const { username, email, role, password } = req.body;
 
   const isUserExist= await usermodel.findOne({
-    $or:[{username},{email}]
+    $or:[{email}]
   })
 
   if(isUserExist){
     return res.status(409).json({
       message:'user alrady exist',
       isUserExist
+    })
+  }
+
+  const isUserNameExist= await usermodel.findOne({
+    username
+  });
+  if(isUserNameExist){
+    return res.status(409).json({
+        message:'username alrady exist'
     })
   }
 
