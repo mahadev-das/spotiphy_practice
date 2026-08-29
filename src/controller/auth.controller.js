@@ -5,6 +5,12 @@ const jwt = require("jsonwebtoken");
 async function userRagistration(req, res) {
   const { username, email, role, password } = req.body;
 
+  if(!username || !email || !role || !password){
+    return res.status(400).json({
+      message:"some field missing"
+    })
+  }
+
   const isUserExist= await usermodel.findOne({
     $or:[{email}]
   })
@@ -34,12 +40,15 @@ async function userRagistration(req, res) {
     password:hash,
   });
 
-  const token = jwt.sign({ userid: user._id }, process.env.JWT_SECRETE);
+  const token = jwt.sign({ userid: user._id }, process.env.JWT_SECRETE,{expiresIn:'1d'});
   console.log(token)
-  res.cookie('token',token);
-  res.status(200).json({
+  res.cookie('token',token,{
+    httpOnly:true,
+
+  });
+  return res.status(200).json({
     success:true,
-    message:'success',
+    message:'Registration successful',
     username,
     email,
     password,
@@ -52,10 +61,15 @@ async function userLogin(req,res){
     console.log(req.body,'userLogin');
     const {username,email,password}=req.body;
 
+    if(!password){
+      return res.status(400).json({
+        message:"some field missing"
+      })
+    }
+
     const user=await usermodel.find({
       $or:[{username},{email}]
     })
-
     console.log(user,'user');
     
 
@@ -64,6 +78,8 @@ async function userLogin(req,res){
         message:'Unauthorize user'
       })
     }
+
+    const hash=bcrypt.compare()
 
     const passwordCheck= await usermodel.find({
       password
