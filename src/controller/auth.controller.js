@@ -79,7 +79,7 @@ async function userLogin(req,res){
       })
     }
 
-    const hash=bcrypt.compare()
+    const hash=bcrypt.compare(password)
 
     const passwordCheck= await usermodel.find({
       password
