@@ -67,38 +67,27 @@ async function userLogin(req,res){
       })
     }
 
-    const user=await usermodel.find({
+    const isUserExist=await usermodel.findOne({
       $or:[{username},{email}]
     })
-    console.log(user,'user');
+    console.log(isUserExist,'userxxx');
     
 
-    if(user.length<=0){
+    if(!isUserExist){
       return res.status(401).json({
         message:'Unauthorize user'
       })
     }
 
-    const hash=bcrypt.compare(password)
+    const hash=await bcrypt.compare(password,isUserExist.password);
+    console.log(hash,'hasshhh');
 
-    const passwordCheck= await usermodel.find({
-      password
-    })
-
-    console.log(passwordCheck,'passwordcheck');
-    
-    if(passwordCheck.length<=0){
-      return res.status(401).json({
-        message:'Unauthorized user , wron password'
-      })
-    }
-
-    const token =jwt.sign({userid:user._id},process.env.JWT_SECRETE);
+    const token = await jwt.sign({userid:isUserExist._id},process.env.JWT_SECRETE);
     res.cookie('token',token);
     res.status(200).json({
         success:'true',
         message:'login successfully',
-        user,
+        isUserExist,
         username,
         email,
         password
