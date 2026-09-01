@@ -1,1 +1,1 @@
-work on auth.controller with token generation
+working on music model for creating new music 

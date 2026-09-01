@@ -66,13 +66,10 @@ async function userLogin(req,res){
         message:"some field missing"
       })
     }
-
     const isUserExist=await usermodel.findOne({
       $or:[{username},{email}]
     })
     console.log(isUserExist,'userxxx');
-    
-
     if(!isUserExist){
       return res.status(401).json({
         message:'Unauthorize user'
@@ -81,6 +78,12 @@ async function userLogin(req,res){
 
     const hash=await bcrypt.compare(password,isUserExist.password);
     console.log(hash,'hasshhh');
+
+    if(!hash){
+      return res.status(404).json({
+        message:'Wrong password'
+      })
+    };
 
     const token = await jwt.sign({userid:isUserExist._id},process.env.JWT_SECRETE);
     res.cookie('token',token);
