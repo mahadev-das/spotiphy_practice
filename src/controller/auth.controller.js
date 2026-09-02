@@ -40,7 +40,7 @@ async function userRagistration(req, res) {
     password:hash,
   });
 
-  const token = jwt.sign({ userid: user._id }, process.env.JWT_SECRETE,{expiresIn:'1d'});
+  const token = jwt.sign({ userid: user._id,role:user.role }, process.env.JWT_SECRETE,{expiresIn:'1d'});
   console.log(token)
   res.cookie('token',token,{
     httpOnly:true,
@@ -85,7 +85,7 @@ async function userLogin(req,res){
       })
     };
 
-    const token = await jwt.sign({userid:isUserExist._id},process.env.JWT_SECRETE);
+    const token = await jwt.sign({userid:isUserExist._id,role:isUserExist.role},process.env.JWT_SECRETE);
     res.cookie('token',token);
     res.status(200).json({
         success:'true',
