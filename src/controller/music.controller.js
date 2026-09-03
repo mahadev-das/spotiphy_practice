@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const usermodel = require("../models/auth.model");
+const musicmodel = require("../models/music.model");
+const uploadfile = require("../services/storage.service");
 
 async function musicCreate(req, res) {
   console.log(req.body, "create music");
@@ -16,24 +18,39 @@ async function musicCreate(req, res) {
       _id: decode.userid,
     });
 
-    if(user.role=='Artist'){
-        return res.status(200).json({
-            message:'music created'
-        })
-    }else{
-        return res.status(404).json({
-            message:'you are not artist, Unauthorized user'
-        })
+    if (user.role != "Artist") {
+      return res.status(404).json({
+        message: "you are not artist, Unauthorized user",
+      });
+    }
+
+    if (user.role == "Artist") {
+      const { title } = req.body.title;
+      const file = req.body.file;
+      console.log(file, "file");
+
+      // const result=await uploadfile.uploadfile(file)
+
+      // const music=musicmodel.create({
+
+      // })
+
+      return res.status(200).json({
+        message: "music created",
+      });
+    } else {
+      return res.status(401).json({
+        message: "unauthorized else part",
+      });
     }
   } catch (err) {
+    console.log(err,'errr');
+    
     return res.status(401).json({
-      message: "unauthorized",
+      message: "unauthorized catch part",
+      err
     });
   }
-
-  res.status(200).json({
-    user,
-  });
 }
 
 module.exports = { musicCreate };
