@@ -5,6 +5,7 @@ const uploadfile = require("../services/storage.service");
 
 async function musicCreate(req, res) {
   console.log(req.body, "create music");
+  
   const token = req.cookies.token;
   if (!token) {
     return res.status(404).json({
@@ -25,8 +26,15 @@ async function musicCreate(req, res) {
     }
 
     if (user.role == "Artist") {
-      const { title } = req.body.title;
-      const file = req.body.file;
+      const { title } = req.body
+      console.log(title,'tttt');
+      
+      const file = req.file;
+      console.log('after file');
+      
+      const result= await uploadfile.uploadfile(file);
+      console.log(result,'result of imageKit');
+      
       console.log(file, "file");
 
       // const result=await uploadfile.uploadfile(file)
